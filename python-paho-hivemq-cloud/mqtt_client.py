@@ -40,9 +40,11 @@ client.on_publish = on_publish
 # subscribe to topic temperature
 client.subscribe("invencon", qos=1)
 
+# Produces a new number in the range of the last number
 def inRange(x):
-    rangeMin = x - 10
-    rangeMax = x + 10
+    numberRange = 10
+    rangeMin = x - numberRange
+    rangeMax = x + numberRange
     
     # Limits the number to not be negative
     if rangeMin < 0:

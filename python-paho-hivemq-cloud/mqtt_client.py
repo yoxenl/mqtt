@@ -43,9 +43,10 @@ client.subscribe("invencon", qos=1)
 def inRange(x):
     rangeMin = x - 10
     rangeMax = x + 10
+    
     if rangeMin < 0:
         rangeMin = 0
-        
+
     randNumber = randrange(rangeMin - 1, rangeMax)
     return randNumber
 

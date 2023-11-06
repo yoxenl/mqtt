@@ -44,6 +44,7 @@ def inRange(x):
     rangeMin = x - 10
     rangeMax = x + 10
     
+    # Limits the number to not be negative
     if rangeMin < 0:
         rangeMin = 0
 

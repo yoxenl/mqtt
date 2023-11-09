@@ -40,24 +40,29 @@ client.on_publish = on_publish
 # subscribe to topic temperature
 client.subscribe("invencon", qos=1)
 
-# Produces a new number in the range of the last number
+# Produces a new number in range of the last number
 def inRange(x):
     numberRange = 10
     rangeMin = x - numberRange
     rangeMax = x + numberRange
     
-    # Limits the number to not be negative
+    # Limits the number to postiives only
     if rangeMin < 0:
         rangeMin = 0
 
     randNumber = randrange(rangeMin - 1, rangeMax)
     return randNumber
 
-randNumber = randrange(0, 50)
+# Generates a random number inside of the assigned range
+rangeMin = 0
+rangeMax = 50
+randNumber = randrange(rangeMin, rangeMax)
+
+# Repeatedly publishes a number to the topic Invencon
 while True:
 
     client.publish("invencon", payload=f"{randNumber}", qos=1)
-    print("Just published " + str(randNumber) + " to Topic invencon")
+    print(f"Just published {randNumber} to Topic invencon")
 
     randNumber = inRange(randNumber)
     

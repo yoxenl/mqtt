@@ -29,8 +29,7 @@ client.on_connect = on_connect
 
 # enable TLS for secure connection
 client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
-# connect to HiveMQ Cloud on port 8883 (default for MQTT)
-client.connect("broker.hivemq.com", 8883)
+client.connect("pibroker.local", 1883)
 
 # setting callbacks, use separate functions like above for better visibility
 client.on_subscribe = on_subscribe
@@ -38,19 +37,21 @@ client.on_message = on_message
 client.on_publish = on_publish
 
 # subscribe to topic temperature
-client.subscribe("invencon", qos=1)
+client.subscribe("text/topic", qos=1)
 
 # Produces a new number in range of the assigned number
-def inRange(x):
+def inRange(startNumber):
     numberRange = 10
-    rangeMin = x - numberRange
-    rangeMax = x + numberRange
+    numberMin = startNumber - numberRange
+    numberMax = startNumber + numberRange
     
-    # Limits the number to postiives only
-    if rangeMin < 0:
-        rangeMin = 0
+    # Limits the number to be in range of our expected range
+    if numberMin < rangeMin:
+        numberMin = rangeMin
+    if numberMax > rangeMax + 1:
+        numberMax = rangeMax + 1
 
-    randNumber = randrange(rangeMin - 1, rangeMax)
+    randNumber = randrange(numberMin - 1, numberMax)
     return randNumber
 
 # Generates a random number inside of the assigned range
@@ -58,11 +59,11 @@ rangeMin = 0
 rangeMax = 50
 randNumber = randrange(rangeMin, rangeMax)
 
-# Repeatedly publishes a number to the topic Invencon
+# Repeatedly publishes a number to the topic text/topic
 while True:
 
-    client.publish("invencon", payload=f"{randNumber}", qos=1)
-    print(f"Just published {randNumber} to Topic invencon")
+    client.publish("text/topic", payload=f"{randNumber}", qos=1)
+    print(f"Just published {randNumber} to Topic text/topic")
 
     randNumber = inRange(randNumber)
     

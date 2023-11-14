@@ -2,9 +2,13 @@ import paho.mqtt.client as mqtt
 from random import randrange
 import time
 
-hostname = "pibroker.local"
-broker_port = 1883
-topic = "invencon"
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+topic = os.environ["topic"]
+broker_port = os.environ["broker_port"]
+hostname = os.environ["hostname"]
 
 # setting callbacks for different events to see if it works, print the message etc.
 def on_connect(client, userdata, flags, rc, properties=None):

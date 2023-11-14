@@ -1,9 +1,14 @@
-import time
-import paho.mqtt.client as paho
-from paho import mqtt
-
-import time
+import paho.mqtt.client as mqtt 
 from random import randrange
+import time
+
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+topic = os.environ["topic"]
+broker_port = os.environ["broker_port"]
+hostname = os.environ["hostname"]
 
 # setting callbacks for different events to see if it works, print the message etc.
 def on_connect(client, userdata, flags, rc, properties=None):
@@ -15,29 +20,11 @@ def on_publish(client, userdata, mid, properties=None):
 
 # print which topic was subscribed to
 def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-    print("Subscribed: " + str(mid) + " " + str(granted_qos))
+    print("Subscribed to: " + str(mid) + " " + str(granted_qos))
 
 # print message, useful for checking if it was successful
 def on_message(client, userdata, msg):
-    print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-
-# using MQTT version 5 here, for 3.1.1: MQTTv311, 3.1: MQTTv31
-# userdata is user defined data of any type, updated by user_data_set()
-# client_id is the given name of the client
-client = paho.Client(client_id="", userdata=None, protocol=paho.MQTTv5)
-client.on_connect = on_connect
-
-# enable TLS for secure connection
-client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
-client.connect("pibroker.local", 1883)
-
-# setting callbacks, use separate functions like above for better visibility
-client.on_subscribe = on_subscribe
-client.on_message = on_message
-client.on_publish = on_publish
-
-# subscribe to topic temperature
-client.subscribe("text/topic", qos=1)
+    print("Published to topic " + msg.topic + " with the QoS of " + str(msg.qos) + ". Message recieved: " + msg.payload.decode())
 
 # Produces a new number in range of the assigned number
 def inRange(startNumber):
@@ -59,11 +46,22 @@ rangeMin = 0
 rangeMax = 50
 randNumber = randrange(rangeMin, rangeMax)
 
-# Repeatedly publishes a number to the topic text/topic
-while True:
+# Creates a client
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_publish = on_publish
+client.on_message = on_message
 
-    client.publish("text/topic", payload=f"{randNumber}", qos=1)
-    print(f"Just published {randNumber} to Topic text/topic")
+# Establishes the connection to the broker
+client.connect(hostname, int(broker_port), 60)
+client.subscribe(topic)
+client.loop_start()
+
+# Repeatedly publishes a number to the topic
+for i in range(10):
+
+    client.publish(topic, payload=f"{randNumber}", qos=1)
+    print(f"Just published {randNumber} to Topic {topic}")
 
     randNumber = inRange(randNumber)
     

@@ -1,4 +1,4 @@
-from giopzero import Motor, PhaseEnableMotor
+from gpiozero import Motor, PhaseEnableMotor
 from time import sleep
 
 motor = Motor(17, 18)

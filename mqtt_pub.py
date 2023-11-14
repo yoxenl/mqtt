@@ -13,7 +13,6 @@ hostname = os.environ["hostname"]
 # setting callbacks for different events to see if it works, print the message etc.
 def on_connect(client, userdata, flags, rc, properties=None):
     print("CONNACK received with code %s." % rc)
-    client.subscribe(topic)
 
 # with this callback you can see if your publish was successful
 def on_publish(client, userdata, mid, properties=None):
@@ -25,16 +24,7 @@ def on_subscribe(client, userdata, mid, granted_qos, properties=None):
 
 # print message, useful for checking if it was successful
 def on_message(client, userdata, msg):
-    print("Published to topic " + msg.topic + " with the QoS of " + str(msg.qos) + ". Message recieved: " + str(msg.payload.decode))
-
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_publish = on_publish
-client.on_subscribe = on_subscribe
-client.on_message = on_message
-
-# Establishes the connection to the broker
-client.connect(hostname, broker_port, 60)
+    print("Published to topic " + msg.topic + " with the QoS of " + str(msg.qos) + ". Message recieved: " + msg.payload.decode())
 
 # Produces a new number in range of the assigned number
 def inRange(startNumber):
@@ -55,6 +45,17 @@ def inRange(startNumber):
 rangeMin = 0
 rangeMax = 50
 randNumber = randrange(rangeMin, rangeMax)
+
+# Creates a client
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_publish = on_publish
+client.on_message = on_message
+
+# Establishes the connection to the broker
+client.connect(hostname, int(broker_port), 60)
+client.subscribe(topic)
+client.loop_start()
 
 # Repeatedly publishes a number to the topic
 for i in range(10):

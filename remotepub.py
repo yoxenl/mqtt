@@ -48,6 +48,7 @@ randNumber = randrange(rangeMin, rangeMax)
 
 # Creates a client
 client = mqtt.Client()
+# Defines client functions
 client.on_connect = on_connect
 client.on_publish = on_publish
 client.on_message = on_message
@@ -62,7 +63,5 @@ for i in range(10):
 
     client.publish(topic, payload=f"{randNumber}", qos=1)
     print(f"Just published {randNumber} to Topic {topic}")
-
     randNumber = inRange(randNumber)
-    
     time.sleep(1)

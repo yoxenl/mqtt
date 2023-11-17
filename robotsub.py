@@ -26,7 +26,6 @@ def to_unsubscribe(message):
                 print("Successfully unsubscribed from topic " + topic)
             else: 
                 print("Unsubscribing to topic " + topic + " failed")
-
         except Exception as e:
             print("Error on unsubscribing:\n" + str(e))
 

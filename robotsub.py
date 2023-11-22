@@ -1,9 +1,21 @@
 import time
 import paho.mqtt.client as mqtt
 
+from quizero import App, Text, PushButton
+import sys
+
 from dotenv import load_dotenv
 import os
 load_dotenv()
+
+def close_gui():
+    sys.exit()
+
+app = App(title = "GUI Development")
+message = Text(app, text = "test GUI")
+button1 = PushButton(app, text = "START", width = "10", height = "3")
+button2 = PushButton(app, text = "STOP", width = "10", height = "3")
+button3 = PushButton(app, command = close_gui, text = "CLOSE", width = "10", height = "3")
 
 topic = os.environ["topic"]
 broker_port = os.environ["broker_port"]

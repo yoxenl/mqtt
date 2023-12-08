@@ -58,6 +58,7 @@ client.connect(hostname, int(broker_port), 60)
 client.subscribe(topic)
 client.loop_start()
 
+"""
 # Repeatedly publishes a number to the topic
 for i in range(10):
 
@@ -65,3 +66,19 @@ for i in range(10):
     print(f"Just published {randNumber} to Topic {topic}")
     randNumber = inRange(randNumber)
     time.sleep(1)
+"""
+running = True
+
+while running:
+    print("Welcome to the Robot Terminal")
+    print("Here is how to use the program:")
+    print("""
+        Default speed is 25 and default direction is forward
+        'r' = check the current pwm value, 's' = stop, 'e' = exit
+        'f' = forward, 'b' = backward
+        'l' = low, 'm' = medium, 'h' = high
+        To run motor 1, type in f1
+        Type any number to set the speed (0-100)
+        """)
+    response = input(": ")
+    client.publish(topic, payload=response)

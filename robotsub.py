@@ -11,38 +11,42 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-"""
+'''
 def close_gui():
     sys.exit()
 
-app = App(title = "GUI Development")
-message = Text(app, text = "test GUI")
-button1 = PushButton(app, text = "START", width = "10", height = "3")
-button2 = PushButton(app, text = "STOP", width = "10", height = "3")
-button3 = PushButton(app, command = close_gui, text = "CLOSE", width = "10", height = "3")
-"""
+app = App(title = 'GUI Development')
+message = Text(app, text = 'test GUI')
+button1 = PushButton(app, text = 'START', width = '10', height = '3')
+button2 = PushButton(app, text = 'STOP', width = '10', height = '3')
+button3 = PushButton(app, command = close_gui, text = 'CLOSE', width = '10', height = '3')
+'''
 
 # Robot identifier
 robotID = 0
-ref = 'Robot' + robotID
+ref = 'Robot' + robotID + ':'
 
 _oe_pin = 0x15
 gpio_pin = 17
 
-topic = os.environ["topic"]
-broker_port = os.environ["broker_port"]
-hostname = os.environ["hostname"]
-
 maxSpeed = 100
-startSpeed = 50
+speed = 25
 minSpeed = 0
 
+topic = os.environ['topic']
+topic_reciever = os.environ['topic_reciever']
+broker_port = os.environ['broker_port']
+hostname = os.environ['hostname']
+
 def on_connect(client, userdata, flags, rc):
-    print("Connection attempt returned " + mqtt.connack_string(rc))
+    msg = 'Connection attempt returned ' + mqtt.connack_string(rc)
+    sendOutput(msg)
+
 
 def on_message(client, userdata, msg):
     msg = msg.payload.decode()
-    print("Message recieved: " + msg)
+    message = 'Message recieved: ' + msg
+    sendOutput(msg)
     readMsg(msg)
 
 def readMsg(message):
@@ -50,7 +54,7 @@ def readMsg(message):
         exitProgram()
     
     if message == 'unsubscribe' or message == 'unsub':
-        to unsubscribe()
+        to_unsubscribe()
         return
 
     try:
@@ -64,21 +68,30 @@ def readMsg(message):
             commands[message]()
 
         except Exception as e: 
-            print('Not a valid input, try again\n' + str(e))
+            msg = 'Not a valid input, try again\n' + str(e)
+            sendOutput(msg)
 
     except Exception as e:
-        print(str(e))
+        sendOutput(str(e))
 
 def to_unsubscribe():
-    print("Initiating to unsubscribe to topic " + topic)
+    msg = 'Initiating to unsubscribe to topic ' + topic
+    sendOutput(msg)
+
     try: 
         result = client.unsubscribe(topic)
+
         if result[0] == 0:
-            print("Successfully unsubscribed from topic " + topic)
+            msg = 'Successfully unsubscribed from topic ' + topic
+            sendOutput(msg)
+
         else: 
-            print("Unsubscribing to topic " + topic + " failed")
+            msg = 'Unsubscribing to topic ' + topic + ' failed'
+            sendOutput(msg)
+
     except Exception as e:
-        print("Error on unsubscribing:\n" + str(e))
+        msg = 'Error on unsubscribing:\n' + str(e)
+        sendOutput(msg)
 
 def startMotor():
     SBC.init(_oe_pin, gpio_pin)
@@ -86,6 +99,11 @@ def startMotor():
     SBC.begin()
     SBC.allOff()
 
+def sendOutput(message):
+    client.publish(topic_reciever, payload=ref + ' ' + message)
+
+# Valid inputs are between 0-100, equivelent to 0-100% duty cycle in PWM
+# 100 is however complete resistance
 def setSpeed(speed):
     try:
         if maxSpeed >= speed >= minSpeed:
@@ -93,39 +111,58 @@ def setSpeed(speed):
             p.ChangeDutyCycle(speed)
     
         else:
-            print(f'Not a valid value, please entera value between {minSpeed} - {maxSpeed}')
+            msg = f'Not a valid value, please entera value between {minSpeed} - {maxSpeed}'
+            sendOutput(msg)
 
     except Exception as e:
-        print('Error, please enter an integer between 0 - 100\n' + str(e))
+        msg = 'Error, please enter an integer between 0 - 100\n' + str(e)
+        sendOutput(msg)
 
 def statusCheck():
-    print(SBC.pwmStatus(0))
+    status = SBC.pwmStatus(0)
+    msg = f'current PWM value: {status}'
+    sendOutput(msg)
 
 def forward():
     SBC.allOn(True, False)
+    msg = 'Forward'
+    sendOutput(msg)
 
 def forward1():
     SBC.on(0)
+    msg = 'Motor 1 forward'
+    sendOutput(msg)
 
 def backward():
     SBC.allOn(False, True)
+    msg = 'Backward'
+    sendOutput(msg)
 
 def stop():
     SBC.allOff()
+    msg = 'Stopping motors'
+    sendOutput(msg)
 
 def low():
     p.ChangeDutyCycle(0)
     p.ChangeDutyCycle(50)
+    msg = 'Low'
+    sendOutput(msg)
 
 def medium():
     p.ChangeDutyCycle(0)
     p.ChangeDutyCycle(25)
+    msg = 'Medium'
+    sendOutput(msg)
 
 def high():
     p.ChangeDutyCycle(0)
+    msg = 'Low'
+    sendOutput(msg)
 
 def exitProgram():
-    print('Exiting')
+    msg = 'Exiting...'
+    sendOutput(msg)
     SBC.allOff
     GPIO.cleanup()
     sys.exit(0)
@@ -150,7 +187,7 @@ def thisRobot(robotnumber):
 startMotor()
 
 p = GPIO.PWM(gpio_pin, 1500)
-p.start(startSpeed)
+p.start(speed)
 
 client = mqtt.Client()
 client.on_connect = on_connect

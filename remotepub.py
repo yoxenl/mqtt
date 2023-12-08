@@ -58,15 +58,6 @@ client.connect(hostname, int(broker_port), 60)
 client.subscribe(topic)
 client.loop_start()
 
-"""
-# Repeatedly publishes a number to the topic
-for i in range(10):
-
-    client.publish(topic, payload=f"{randNumber}", qos=1)
-    print(f"Just published {randNumber} to Topic {topic}")
-    randNumber = inRange(randNumber)
-    time.sleep(1)
-"""
 running = True
 
 while running:

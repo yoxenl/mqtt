@@ -1,0 +1,117 @@
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+.line {
+  border: 3px solid red;
+  width: 200px;
+}
+/****** Styling for the Layout ***********/
+.wrapper {
+  background-color: rgb(247, 244, 244);
+  list-style-type: none;
+  padding: 0;
+  border-radius: 5px;
+}
+.form-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5em;
+}
+.form-row > label {
+  padding: 1em;
+  flex: 1;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.form-row > input,
+.form-row > textarea {
+  flex: 2;
+}
+.form-row > input,
+.form-row > button,
+.form-row > textarea {
+  padding: 0.5em;
+  resize: vertical;
+  margin: 10px 0;
+  box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  font-size: 1.2em;
+}
+.form-row > textarea {
+  font-size: 1.5em;
+  background-color: rgb(242, 248, 248);
+  text-align: center;
+  font-weight: bold;
+}
+
+.btn-container {
+  flex: 3;
+  column-gap: 10px;
+  display: flex;
+}
+
+.btn-container > button {
+  padding: 1em;
+  margin: 10px 0;
+  box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  font-size: 1.2em;
+}
+
+.change {
+  background-color: green;
+}
+
+.switch-container {
+  position: relative;
+  display: flex;
+  width: 260px;
+  height: 100px;
+  background-color: linear-gradient;
+  margin: auto;
+  border-radius: 50px;
+  background: #0e0e0e;
+  border: 1px solid #222;
+  box-shadow: 0 0 5px 1px #333;
+}
+
+.switch-container.standby {
+  border: 1px solid #2196f3;
+  box-shadow: 0 0 6px 1px #2196f3;
+}
+
+.switch-container button {
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-size: 1.1rem;
+  width: 100%;
+  border-radius: 50px;
+  margin: 0.8rem;
+  background: #151513;
+  color: gray;
+}
+
+#ON.active {
+  background: #4c8137;
+}
+
+#OFF.active {
+  background: #b8021d;
+}
+
+#status {
+  background-color: lightcyan;
+  text-align: center;
+  font-weight: bold;
+}
+
+.dot {
+  height: 25px;
+  width: 25px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+}
